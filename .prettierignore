@@ -1,0 +1,6 @@
+# Ignore artifacts:
+bin
+build
+coverage
+dist
+node_modules
