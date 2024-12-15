@@ -2,7 +2,6 @@
   "name": "acm",
   "version": "1.0.0",
   "description": "AWS Credentials Manager",
-  "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
