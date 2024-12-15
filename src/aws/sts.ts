@@ -10,7 +10,7 @@ export class STS {
     }
 
     public async credentials() {
-        return await (await this._client).config.credentials({ forceRefresh: true });
+        return (await this._client).config.credentials({ forceRefresh: true });
     }
 
     public static fromSSO(profile?: string): STS {
@@ -18,7 +18,6 @@ export class STS {
     }
 
     private static async clientFromSSO(profile: string): Promise<STSClient> {
-        // TODO: profile validation
         const client = new STSClient({
             credentials: fromSSO({ profile }),
         });
