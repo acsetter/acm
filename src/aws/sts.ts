@@ -1,6 +1,6 @@
-import { STSClient } from "@aws-sdk/client-sts";
-import { fromSSO } from "@aws-sdk/credential-provider-sso";
-import { SSO } from "./sso";
+import { STSClient } from '@aws-sdk/client-sts';
+import { fromSSO } from '@aws-sdk/credential-provider-sso';
+import { SSO } from './sso';
 
 export class STS {
     private constructor(private _client: Promise<STSClient>) {}
@@ -22,7 +22,7 @@ export class STS {
             credentials: fromSSO({ profile }),
         });
 
-        await client.config.credentials().catch(() => SSO.login(profile))
+        await client.config.credentials().catch(() => SSO.login(profile));
 
         return client;
     }

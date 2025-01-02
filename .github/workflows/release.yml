@@ -1,36 +1,36 @@
 name: 🚛 Semantic Release
 
 on:
-  push:
-    branches:
-      - master
-      - '*.*.x'
+    push:
+        branches:
+            - master
+            - '*.*.x'
 
 jobs:
-  release:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write # to be able to publish a GitHub release
-      issues: write # to be able to comment on released issues
-      pull-requests: write # to be able to comment on released pull requests
-      id-token: write # to enable use of OIDC for npm provenance
-    steps:
-      - name: 🗃️ Checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          persist-credentials: false
+    release:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write # to be able to publish a GitHub release
+            issues: write # to be able to comment on released issues
+            pull-requests: write # to be able to comment on released pull requests
+            id-token: write # to enable use of OIDC for npm provenance
+        steps:
+            - name: 🗃️ Checkout
+              uses: actions/checkout@v3
+              with:
+                  fetch-depth: 0
+                  persist-credentials: false
 
-      - name: 🏗️ Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20.x
+            - name: 🏗️ Setup Node
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 20.x
 
-      - name: 💾 Install Dependencies
-        run: npm install -g semantic-release @semantic-release/changelog @semantic-release/git
+            - name: 💾 Install Dependencies
+              run: npm install -g semantic-release @semantic-release/changelog @semantic-release/git
 
-      - name: 🏁 Run Semantic Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: semantic-release --debug
+            - name: 🏁 Run Semantic Release
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: semantic-release --debug
