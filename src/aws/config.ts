@@ -1,22 +1,83 @@
+import { SsoProfile } from '@aws-sdk/credential-provider-sso';
 import { readFile } from 'fs/promises';
 import { parse } from 'ini';
 
-export type ConfigSection = {
-    sectionType: 'default' | 'profile' | 'sso-session' | string;
-    sectionName: 'default' | string;
-    section: Record<string, string | undefined>;
-};
+export type ConfigInstance = {
+    profiles: Map<string, Record<string, string | undefined>>;
+    ssoSessions: Map<string, Record<string, string | undefined>>;
+}
 
 export class Config {
-    public static async loadConfigFile(filePath: string): Promise<ConfigSection[]> {
-        return await readFile(filePath, 'utf-8')
-            .then(parse)
-            .then(data =>
-                Object.entries(data).map(([header, section]) => {
-                    const { sectionType, sectionName } = this.parseConfigSectionHeader(header);
-                    return { sectionType, sectionName, section };
-                }),
+    private static _data: Promise<ConfigInstance>;
+
+    public static get data(): Promise<ConfigInstance> {
+        if (!Config._data) {
+            Config._data = Config.loadConfigFile(
+                process.env.AWS_CONFIG_FILE || `${process.env.HOME}/.aws/config`
             );
+        }
+
+        return Config._data;
+    }
+
+    public static async getSsoProfile(profileName: string): Promise<SsoProfile> {
+        const profile = (await Config.data).profiles.get(profileName);
+        if (!profile) {
+            throw new Error(`Profile '${profileName}' not found`);
+        };
+        const ssoSession = profile.sso_session ? (await Config._data).ssoSessions.get(profile.sso_session) : undefined;
+        const profileData = {
+            ...(ssoSession ?? {}),
+            ...profile,
+        }
+
+        if (!profileData.sso_start_url) {
+            throw new Error(`sso_start_url is required but missing in profile '${profileName}'`);
+        }
+        if (!profileData.sso_account_id) {
+            throw new Error(`sso_account_id is required but missing in profile '${profileName}'`);
+        }
+        if (!profileData.sso_region) {
+            throw new Error(`sso_region is required but missing in profile '${profileName}'`);
+        }
+        if (!profileData.sso_role_name) {
+            throw new Error(`sso_role_name is required but missing in profile '${profileName}'`);
+        }
+
+        return profileData as SsoProfile;
+    }
+
+    private static async loadConfigFile(filePath: string): Promise<ConfigInstance> {
+        return readFile(filePath, 'utf-8')
+            .then(parse)
+            .then(data => {
+                const config = {
+                    profiles: new Map<string, Record<string, string | undefined>>(),
+                    ssoSessions: new Map<string, Record<string, string | undefined>>(),
+                }
+
+                Object.entries(data).map(([header, section]) => {
+                    const { sectionType, sectionName } = Config.parseConfigSectionHeader(header);
+
+                    if (sectionType === 'profile') {
+                        config.profiles.set(sectionName, {
+                            sectionType,
+                            sectionName,
+                            section,
+                        });
+                    } else if (sectionType === 'sso-session') {
+                        config.ssoSessions.set(sectionName, {
+                            sectionType,
+                            sectionName,
+                            section,
+                        });
+                    } else {
+                        throw new Error(`Unsupported section type: ${sectionType}`);
+                    }
+                });
+
+                return config;
+            });
     }
 
     private static parseConfigSectionHeader(header: string): {
@@ -24,9 +85,10 @@ export class Config {
         sectionName: string;
     } {
         const trimmed = header.trim();
+        const sectionType = trimmed.split(' ')[0].toLowerCase();
 
         return {
-            sectionType: trimmed.split(' ')[0].toLowerCase(),
+            sectionType: sectionType === 'default' ? 'profile' : sectionType,
             sectionName: trimmed.slice(trimmed.indexOf(' ') + 1),
         };
     }

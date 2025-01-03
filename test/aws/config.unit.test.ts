@@ -5,14 +5,11 @@ describe('Config', () => {
 
     describe('loadConfigFile', () => {
         test('should load a config file', async () => {
-            const result = await Config.loadConfigFile(mockConfigFilePath);
-            // console.log(JSON.stringify(result, null, 2));
+            const result = await Config['loadConfigFile'](mockConfigFilePath);
 
             expect(result).toBeDefined();
-            expect(result.length).toBeGreaterThanOrEqual(4);
-            expect(result.find(section => section.sectionType === 'default')).toBeDefined();
-            expect(result.find(section => section.sectionType === 'profile')).toBeDefined();
-            expect(result.find(section => section.sectionType === 'sso-session')).toBeDefined();
+            expect(result.profiles.size).toBeGreaterThanOrEqual(3);
+            expect(result.ssoSessions.size).toBeGreaterThanOrEqual(1);
         });
     });
 });
