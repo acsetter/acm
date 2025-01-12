@@ -17,15 +17,20 @@
   },
   "homepage": "https://github.com/acsetter/acm#readme",
   "dependencies": {
+    "@aws-sdk/client-sso-oidc": "^3.699.0",
     "@aws-sdk/client-sts": "^3.699.0",
     "@aws-sdk/credential-provider-sso": "^3.699.0",
     "@aws-sdk/credential-providers": "^3.699.0",
     "@aws-sdk/shared-ini-file-loader": "^3.370.0",
     "@oclif/core": "^4.0.37",
-    "aws-sdk": "^2.1692.0"
+    "@types/jest": "^29.5.14",
+    "aws-sdk": "^2.1692.0",
+    "ini": "^5.0.0",
+    "open": "^10.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.16.0",
+    "@types/ini": "^4.1.1",
     "@types/node": "^18.19.68",
     "eslint": "^9.16.0",
     "globals": "^15.13.0",
