@@ -6,7 +6,7 @@ const config: Config = {
     transform: {
         '^.+\\.tsx?$': ['ts-jest', { isolatedModules: true }],
     },
-    // transformIgnorePatterns: ['node_modules'],
+    transformIgnorePatterns: ['node_modules'],
     testEnvironment: 'node',
 };
 
