@@ -46,7 +46,7 @@
   },
   "oclif": {
     "bin": "acm",
-    "commands": "./dist/commands",
+    "commands": "./dist/src/commands",
     "dirname": "acm",
     "topicSeparator": " "
   }

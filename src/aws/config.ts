@@ -60,17 +60,9 @@ export class Config {
                     const { sectionType, sectionName } = Config.parseConfigSectionHeader(header);
 
                     if (sectionType === 'profile') {
-                        config.profiles.set(sectionName, {
-                            sectionType,
-                            sectionName,
-                            section,
-                        });
+                        config.profiles.set(sectionName, section);
                     } else if (sectionType === 'sso-session') {
-                        config.ssoSessions.set(sectionName, {
-                            sectionType,
-                            sectionName,
-                            section,
-                        });
+                        config.ssoSessions.set(sectionName, section);
                     } else {
                         throw new Error(`Unsupported section type: ${sectionType}`);
                     }
