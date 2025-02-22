@@ -1,4 +1,3 @@
-import { exec } from 'child_process';
 import {
     SSOOIDCClient,
     CreateTokenCommand,
@@ -118,22 +117,5 @@ export class SSO {
         }
 
         return response;
-    }
-
-    public static async login(profile: string): Promise<string> {
-        return await new Promise((resolve, reject) =>
-            exec(`aws sso login --profile ${profile}`, (error, stdout) => {
-                if (error) reject(error);
-                else resolve(stdout);
-            }),
-        );
-    }
-
-    public static async isAwsCliInstalled(): Promise<boolean> {
-        return await new Promise(resolve =>
-            exec('aws --version', error => {
-                resolve(!error);
-            }),
-        );
     }
 }
