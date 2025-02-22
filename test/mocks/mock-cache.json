@@ -1,0 +1,12 @@
+[
+  {
+    "startUrl": "https://www.example.com",
+    "accessToken": "mock-access-token",
+    "expiresAt": "2021-01-01T00:00:00.000Z",
+    "refreshToken": "mock-refresh-token",
+    "region": "us-east-1",
+    "clientId": "mock-client-id",
+    "clientSecret": "mock-client-secret",
+    "clientName": "mock-client-name"
+  }
+]

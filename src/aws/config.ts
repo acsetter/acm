@@ -5,16 +5,18 @@ import { parse } from 'ini';
 export type ConfigInstance = {
     profiles: Map<string, Record<string, string | undefined>>;
     ssoSessions: Map<string, Record<string, string | undefined>>;
-}
+};
 
 export class Config {
+    public static readonly folderPath =
+        process.platform === 'win32'
+            ? `${process.env.USERPROFILE}\\.aws`
+            : `${process.env.HOME}/.aws`;
     private static _data: Promise<ConfigInstance>;
 
     public static get data(): Promise<ConfigInstance> {
         if (!Config._data) {
-            Config._data = Config.loadConfigFile(
-                process.env.AWS_CONFIG_FILE || `${process.env.HOME}/.aws/config`
-            );
+            Config._data = Config.loadConfigFile(`${this.folderPath}/config`);
         }
 
         return Config._data;
@@ -24,12 +26,14 @@ export class Config {
         const profile = (await Config.data).profiles.get(profileName);
         if (!profile) {
             throw new Error(`Profile '${profileName}' not found`);
-        };
-        const ssoSession = profile.sso_session ? (await Config._data).ssoSessions.get(profile.sso_session) : undefined;
+        }
+        const ssoSession = profile.sso_session
+            ? (await Config._data).ssoSessions.get(profile.sso_session)
+            : undefined;
         const profileData = {
             ...(ssoSession ?? {}),
             ...profile,
-        }
+        };
 
         if (!profileData.sso_start_url) {
             throw new Error(`sso_start_url is required but missing in profile '${profileName}'`);
@@ -54,7 +58,7 @@ export class Config {
                 const config = {
                     profiles: new Map<string, Record<string, string | undefined>>(),
                     ssoSessions: new Map<string, Record<string, string | undefined>>(),
-                }
+                };
 
                 Object.entries(data).map(([header, section]) => {
                     const { sectionType, sectionName } = Config.parseConfigSectionHeader(header);
@@ -63,8 +67,6 @@ export class Config {
                         config.profiles.set(sectionName, section);
                     } else if (sectionType === 'sso-session') {
                         config.ssoSessions.set(sectionName, section);
-                    } else {
-                        throw new Error(`Unsupported section type: ${sectionType}`);
                     }
                 });
 

@@ -1,4 +1,4 @@
-import { assertDefined, sleep } from "../src/utils";
+import { assertDefined, assertString, sleep } from "../src/utils";
 
 describe('utils', () => {
     describe('sleep', () => {
@@ -16,6 +16,16 @@ describe('utils', () => {
 
         it('should throw an error if value is undefined', () => {
             expect(() => assertDefined(undefined, 'value is undefined')).toThrow('value is undefined');
+        });
+    });
+
+    describe('assertString', () => {
+        it('should not throw an error if value is a string', () => {
+            expect(() => assertString('value', 'value is not a string')).not.toThrow();
+        });
+
+        it('should throw an error if value is not a string', () => {
+            expect(() => assertString(123, 'value is not a string')).toThrow('value is not a string');
         });
     });
 });
